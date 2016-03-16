@@ -19,8 +19,7 @@ $thumbnailSrc = $src[0];
 
     <div class="mt_blog">
    <h2><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h2>
-   <i><?php the_time('F j, Y'); ?></i>
-   <?php echo do_shortcode('[ssboost] '); ?>
+   <i><?php the_time('F j, Y'); ?></i>  
 <div class="clear"></div>   
     <div class="mt_blosection">
     <img src="<?php bloginfo('template_directory'); ?>/thumb.php?src=<?php echo $thumbnailSrc; ?>&h=200&w=300&zc=1q=100" alt="">
