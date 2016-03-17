@@ -27,9 +27,9 @@ get_header(); ?>
 <?php endwhile; ?>
 
 <?php endif;  ?>
-      
+    
       <?php /*Pagination code start here*/
-			echo wpbeginner_numeric_posts_nav(); wp_reset_query(); ?> 
+	  echo wpbeginner_numeric_posts_nav(); wp_reset_query(); ?> 
 
 <div class="clear"></div> 
   </aside>
