@@ -294,6 +294,21 @@ RENAME table `wp_usermeta` TO `pec_usermeta`;
 RENAME table `wp_users` TO `pec_users`;
 
 
+
+/*.htaccess To Redirect URLs*/
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^example\.com [NC]
+RewriteRule ^(.*)$ http://www.example.com/$1 [L,R=301,NC]
+
+
+/*Add www With HTTP/HTTPS*/
+RewriteCond %{HTTP_HOST} !^$
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteCond %{HTTPS}s ^on(s)|
+RewriteRule ^ http%1://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+
+
  SELECT * FROM `pec_options` WHERE `option_name` LIKE '%wp_%'
  
  SELECT * FROM `pec_usermeta` WHERE `meta_key` LIKE '%wp_%'
