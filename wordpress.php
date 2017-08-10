@@ -1,5 +1,29 @@
 <?php
+# Redirect non-www urls to www
+RewriteEngine on
+RewriteCond %{HTTP_HOST} !^www\.yoursite\.com
+RewriteRule (.*) http://www.yoursite.com/$1 [R=301,L]
+
+# Redirect a particular page
+Redirect 301 /index.php/homepage/2-uncategorised/ http://www.airlinkshuttle.co.nz/
+
+# Redirect http to https entire site
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{SERVER_PORT} !^443$
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+/*Set temp dir path via cpanel in php.ini*/
+upload_tmp_dir = on
+upload_tmp_dir = /var/www/vhosts/rallysolutions.com/httpdocs/wp-content/temp/
 //Plugin: Featured Video Plus
+/*
+Get unattach image from posts
+*/
+ select * from wp_posts where post_parent='0' and post_type='attachment'
+
+
 /*
 Show Custom post type code:
 */
@@ -12,10 +36,11 @@ Show Custom post type code:
 	
 /*
 Show post of particular category code:
+
 */
 	$posts = get_posts('category=3&numberposts=10'); 
 	foreach($posts as $post) {
-		the_title();
+	 the_title();
 	} 
 	wp_reset_query();  
 
@@ -25,6 +50,7 @@ Show all post code:
 	 if ( have_posts() ) :
 		while ( have_posts() ) : the_post(); 
 				the_category(" ");
+				
 				echo wp_trim_words( get_the_title(), 20 ); 
 				the_author();
 				wp_trim_words( get_the_content(), 50 );
@@ -59,6 +85,7 @@ while (have_posts()) : the_post();
 the_title();
 the_content();
  endwhile;
+ 
 /* 
 how to display multiple custom fields of a posts
 */	
@@ -113,6 +140,7 @@ function my_custom_post_youtube() {
 		'supports'      => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
 		'has_archive'   => true,
 	);
+	
 	register_post_type( 'youtube', $args );	
 }
 add_action( 'init', 'my_custom_post_youtube' );
@@ -278,6 +306,12 @@ $term_link = get_term_link($term); ?>
 <?php } else :				
 	print('No posts found'); 
 endif;
+
+/*Create a file without via wp-admin details*/
+paste this code in hedear file then you will be 
+touch('wp-content/themes/YOUR_THEME_DIR/FILE_NAME.php');
+
+
 /*Change Prefix of wordpress table*/
 change prefix in wp-config file:  _pec
 RENAME table `wp_commentmeta` TO `pec_commentmeta`;
@@ -294,24 +328,23 @@ RENAME table `wp_usermeta` TO `pec_usermeta`;
 RENAME table `wp_users` TO `pec_users`;
 
 
-
-/*.htaccess To Redirect URLs*/
-RewriteEngine on
-RewriteCond %{HTTP_HOST} ^example\.com [NC]
-RewriteRule ^(.*)$ http://www.example.com/$1 [L,R=301,NC]
-
-
-/*Add www With HTTP/HTTPS*/
-RewriteCond %{HTTP_HOST} !^$
-RewriteCond %{HTTP_HOST} !^www\. [NC]
-RewriteCond %{HTTPS}s ^on(s)|
-RewriteRule ^ http%1://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-
-
-
  SELECT * FROM `pec_options` WHERE `option_name` LIKE '%wp_%'
  
  SELECT * FROM `pec_usermeta` WHERE `meta_key` LIKE '%wp_%'
+ 
+ 
+ dismissed_wp_pointers
+ _________________________________________________________________________________________________________________________
+ Remove website comment form field
+ function crunchify_disable_comment_url($fields) { 
+    unset($fields['url']);
+    return $fields;
+}
+add_filter('comment_form_default_fields','crunchify_disable_comment_url');
+ 
+ 
+ 
+ 
  _________________________________________________________________________________________________________________________
 
 <form method="get" id="searchform" action="<?php echo esc_url( home_url( '/' ) ); ?>">
@@ -341,3 +374,8 @@ OR
 $title = explode( ' | ', the_title, 2 );
 
 http://www.phpro.org/tutorials/Introduction-to-PHP-PDO.html
+
+/* Get User list datda with custom post type*/
+$profile_post = get_posts(array('post_type' => PROFILE,'author' => $post_author_ID));
+$profile_post = $profile_post[0];
+$current = $post_object->convert( $profile_post );
