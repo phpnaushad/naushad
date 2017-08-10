@@ -1,5 +1,4 @@
-
- # compress text, html, javascript, css, xml:
+#compress text, html, javascript, css, xml:
 AddOutputFilterByType DEFLATE text/plain
 AddOutputFilterByType DEFLATE text/html
 AddOutputFilterByType DEFLATE text/xml
@@ -15,3 +14,37 @@ AddType x-font/eot .eot
 AddType x-font/woff .woff
 AddType image/x-icon .ico
 AddType image/png .png
+
+#Header Expire
+ExpiresActive On
+ExpiresDefault "access plus 10 days"
+ExpiresByType text/css "access plus 1 week"
+ExpiresByType text/plain "access plus 1 month"
+ExpiresByType image/svg+xml "access 1 month"
+ExpiresByType image/gif "access plus 1 month"
+ExpiresByType image/png "access plus 1 month"
+ExpiresByType image/jpeg "access plus 1 month"
+ExpiresByType application/x-javascript "access plus 1 month"
+ExpiresByType application/javascript "access plus 1 week"
+ExpiresByType application/x-icon "access plus 1 year"
+
+Add in function.php
+
+/*function to add async and defer attributes*/
+function defer_js_async($tag){
+ 
+#defer scripts
+foreach($scripts_to_defer as $defer_script){
+	if(true == strpos($tag, $defer_script ) )
+	return str_replace( ' src', ' defer="defer" src', $tag );	
+ }
+}
+add_filter( 'script_loader_tag', 'defer_js_async', 10 );
+
+// Add code for remove query string for version
+function _remove_script_version( $src ){
+    $parts = explode( '?ver', $src );
+        return $parts[0];
+}
+add_filter( 'script_loader_src', '_remove_script_version', 15, 1 );
+add_filter( 'style_loader_src', '_remove_script_version', 15, 1 );
