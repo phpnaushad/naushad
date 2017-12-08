@@ -113,6 +113,15 @@ Link to home url & logo code:
 */	 
  echo home_url();
  echo site_url(); //For site path Exp http://www.example.com/wordpress
+
+/*Add cart page redirect to direct checkout page*/
+add_filter ('woocommerce_add_to_cart_redirect', 'woo_redirect_to_checkout');
+function woo_redirect_to_checkout() {	
+	$checkout_url = WC()->cart->get_checkout_url();	
+	return $checkout_url;
+}
+/*Direct Products ID addtocart page*/
+http://domainname.com/?add-to-cart=697
 /*
 Add Custom Post Type Option in WP Admin code:
 */	 
