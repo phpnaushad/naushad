@@ -23,6 +23,12 @@ Get unattach image from posts
 */
  select * from wp_posts where post_parent='0' and post_type='attachment'
 
+/*Display post image*/ 
+$imgAlt = get_post_meta($imgID,'_wp_attachment_image_alt', true); 
+$imgID  = get_post_thumbnail_id($post->ID);
+$img    = wp_get_attachment_image_src($imgID,'full', false, ''); 
+$imgAlt = get_post_meta($imgID,'_wp_attachment_image_alt', true); 
+<img src="<?php echo $img[0]; ?>"alt="<?php echo $imgAlt; ?>" />
 
 /*
 Show Custom post type code:
