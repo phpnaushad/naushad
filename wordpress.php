@@ -394,3 +394,147 @@ http://www.phpro.org/tutorials/Introduction-to-PHP-PDO.html
 $profile_post = get_posts(array('post_type' => PROFILE,'author' => $post_author_ID));
 $profile_post = $profile_post[0];
 $current = $post_object->convert( $profile_post );
+
+/**
+ * Disable front page from search
+ */
+function wpb_filter_query( $query, $error = true ) {
+if ( is_search() ) {
+$query->is_search = false;
+$query->query_vars[s] = false;
+$query->query[s] = false;
+if ( $error == true )
+$query->is_404 = true;
+}
+}
+add_action( 'parse_query', 'wpb_filter_query' );
+add_filter( 'get_search_form', create_function( '$a', "return null;" ) );
+function remove_search_widget() {
+    unregister_widget('WP_Widget_Search');
+ 
+add_action( 'widgets_init', 'remove_search_widget' );
+}
+ ?>  
+<p>
+    <div class="sm-row-content">
+        <label for="meta-checkbox">
+            <input type="checkbox" name="meta-checkbox" id="meta-checkbox" value="yes" <?php if ( isset ( $featured['meta-checkbox'] ) ) checked( $featured['meta-checkbox'][0], 'yes' ); ?> />
+            <?php _e( 'Featured this post', 'sm-textdomain' )?>
+        </label>
+        
+    </div>
+</p>
+ 
+    <?php
+}
+add_action( 'add_meta_boxes', 'sm_custom_meta' );
+
+/**
+ * Saves the custom meta input
+ */
+function sm_meta_save( $post_id ) {
+ 
+    // Checks save status
+    $is_autosave = wp_is_post_autosave( $post_id );
+    $is_revision = wp_is_post_revision( $post_id );
+    $is_valid_nonce = ( isset( $_POST[ 'sm_nonce' ] ) && wp_verify_nonce( $_POST[ 'sm_nonce' ], basename( __FILE__ ) ) ) ? 'true' : 'false';
+ 
+    // Exits script depending on save status
+    if ( $is_autosave || $is_revision || !$is_valid_nonce ) {
+        return;
+    }
+ 
+ // Checks for input and saves
+if( isset( $_POST[ 'meta-checkbox' ] ) ) {
+    update_post_meta( $post_id, 'meta-checkbox', 'yes' );
+} else {
+    update_post_meta( $post_id, 'meta-checkbox', '' );
+}
+ 
+}
+add_action( 'save_post', 'sm_meta_save' );
+
+/*No of Post view code start here*/
+function getPostViews($postID){
+    $count_key = 'post_views_count';
+    $count = get_post_meta($postID, $count_key, true);
+    if($count==''){
+        delete_post_meta($postID, $count_key);
+        add_post_meta($postID, $count_key, '0');
+        return "0 View";
+    }
+    return $count.' Views';
+}
+function setPostViews($postID) {
+    $count_key = 'post_views_count';
+    $count = get_post_meta($postID, $count_key, true);
+    if($count==''){
+        $count = 0;
+        delete_post_meta($postID, $count_key);
+        add_post_meta($postID, $count_key, '0');
+    }else{
+        $count++;
+        update_post_meta($postID, $count_key, $count);
+    }
+}
+// Remove issues with prefetching adding extra views
+remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head', 10, 0);
+
+//echo getPostViews(get_the_ID());
+
+// create shortcode to display Most Popular Posts
+add_shortcode( 'list-popular-posts', 'custom_popular_post_code' );
+function custom_popular_post_code() {
+    ob_start();
+    $query = new WP_Query( 
+	array( 
+		'post_type' => 'post', 
+		'posts_per_page' => 2, 
+		'meta_key' => 'wpb_post_views_count', 
+		'orderby' => 'meta_value_num', 
+		'order' => 'DESC'		
+	) ) ;
+	
+    if ( $query->have_posts() ) { 
+	//echo $count = get_post_meta( $post->ID, 'wpb_post_views_count', true );
+	?>
+        <div class="ft-news">
+            <?php while ( $query->have_posts() ) : $query->the_post(); 
+			
+			?>
+            <div class="row">
+				<div class="col-md-3 col-sm-3 col-xs-12">
+				<a href="<?php the_permalink(); ?>">
+				<?php the_post_thumbnail( array(100, 75), false, array('alt' => trim(strip_tags( $wp_postmeta->_wp_attachment_image_alt ))
+				) ); ?>
+				</div>
+				<div class="col-md-9 col-sm-9 col-xs-12">
+					<p><i class="fa fa-calendar-o" aria-hidden="true"></i> <?php the_time('F j, Y') ?></p>
+					<h5><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
+				</div>
+			</div>
+            <?php endwhile;
+            wp_reset_postdata(); ?>
+        </div>
+    <?php $myvariable = ob_get_clean();
+    return $myvariable;
+    }
+}
+
+/*Custom Category List*/
+add_shortcode( 'cat-list', 'getCatList' );
+function getCatList(){
+$categories = get_categories( array(
+    'orderby' => 'name',
+    'order'   => 'ASC',
+	'exclude' => '1',
+	'show_count' => 0
+) );?>
+<h4 class="cat-list">Categories</h4>
+<ul>
+<?php foreach( $categories as $category ) {
+	echo '<li><a href="' . get_category_link($category->term_id) . '">' . $category->name . '</a></li>';   
+} ?>
+</ul>
+<?php
+}
