@@ -13,10 +13,27 @@ RewriteEngine On
 RewriteCond %{SERVER_PORT} !^443$
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 </IfModule>
+//block all attempts to access your WordPress username via the ?author parameter 
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/wp-admin [NC]
+RewriteCond %{QUERY_STRING} author=\d
+RewriteRule ^ /? [L,R=301]
+
+OR
+
+function redirect_to_home_if_author_parameter() {
+
+	$is_author_set = get_query_var( 'author', '' );
+	if ( $is_author_set != '' && !is_admin()) {
+		wp_redirect( home_url(), 301 );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'redirect_to_home_if_author_parameter' );
 
 /*Set temp dir path via cpanel in php.ini*/
 upload_tmp_dir = on
-upload_tmp_dir = /var/www/vhosts/rallysolutions.com/httpdocs/wp-content/temp/
+upload_tmp_dir = /var/www/vhosts/domainname.com/httpdocs/wp-content/temp/
 //Plugin: Featured Video Plus
 /*
 Get unattach image from posts
