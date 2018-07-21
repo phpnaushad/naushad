@@ -30,7 +30,16 @@ function redirect_to_home_if_author_parameter() {
 	}
 }
 add_action( 'template_redirect', 'redirect_to_home_if_author_parameter' );
-
+/*image attachment page, then they will be redirected to the parent post*/
+add_action( 'template_redirect', 'wpsites_attachment_redirect' );
+function wpsites_attachment_redirect(){
+global $post;
+if ( is_attachment() && isset($post->post_parent) && is_numeric($post->post_parent) && ($post->post_parent != 0) ) :
+    wp_redirect( get_permalink( $post->post_parent ), 301 );
+    exit();
+    wp_reset_postdata();
+    endif;
+}
 /*Set temp dir path via cpanel in php.ini*/
 upload_tmp_dir = on
 upload_tmp_dir = /var/www/vhosts/domainname.com/httpdocs/wp-content/temp/
