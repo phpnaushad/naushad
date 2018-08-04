@@ -1,4 +1,11 @@
 <?php
+# Always use https for secure connections
+# Replace 'www.example.com' with your domain name
+# (as it appears on your SSL certificate)
+RewriteEngine On
+RewriteCond %{SERVER_PORT} 80
+RewriteRule ^(.*)$ https://www.example.com/$1 [R=301,L]
+_________________________________________________________________________________________
 # Redirect non-www urls to www
 RewriteEngine on
 RewriteCond %{HTTP_HOST} !^www\.yoursite\.com
