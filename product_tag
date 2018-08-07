@@ -1,0 +1,71 @@
+						<div class="disease-page-wrapper full-width">							
+						<?php
+							$taxonomy = 'product_tag';
+							$number   = 30; // number of terms to display per page
+							// Setup:
+							$page         = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+							$offset       = ( $page > 0 ) ?  $number * ( $page - 1 ) : 1;
+							$totalterms   = wp_count_terms( $taxonomy, array( 'hide_empty' => TRUE ) ); 
+							$totalpages   = ceil( $totalterms / $number );
+							// Debug:
+							// printf( 'taxonomy: %s - number: %s - page: %s - offset: %s - totalterms %s - totalpages: %s' , $taxonomy, $number, $page, $offset, $totalterms, $totalpages );
+							// Here I list all the available paramters to get_terms():
+							$args = array(
+								'orderby'       => 'name', 
+								'order'         => 'ASC',
+								'hide_empty'    => true, 
+								'exclude'       => array(), 
+								'exclude_tree'  => array(), 
+								'include'       => array(),
+								'number'        => $number, 
+								'fields'        => 'all', 
+								'slug'          => '', 
+								'parent'         => '',
+								'hierarchical'  => true, 
+								'child_of'      => 0, 
+								'get'           => '', 
+								'name__like'    => '',
+								'pad_counts'    => false, 
+								'offset'        => $offset, 
+								'search'        => '', 
+								'cache_domain'  => 'core'
+							); 
+
+							$terms = get_terms( $taxonomy, $args );
+
+							foreach ( $terms as $term )
+							{
+							$result = substr($term->name, 0, 1);
+							?>
+							<div class="col-md-4 col-sm-6 col-xs-12">
+								<div class="disease-grey-bg">
+									<span><?php echo $result; ?></span>
+									<h3><a href="<?php echo get_term_link($term->slug, $taxonomy); ?>"><?php echo $term->name; ?></a></h3>
+								</div>
+							</div>
+							<?php } ?>
+						</div>
+						<div class="pagenation-section">
+							<?php printf( '<ul class="pagination">%s</ul>',  custom_page_navi( $totalpages, $page, 3, 0 )  ); ?>
+						</div>	
+            
+            /*pagination oce*/
+            function custom_page_navi( $totalpages, $page, $end_size, $mid_size )
+{
+    $bignum = 999999999;
+
+    if ( $totalpages <= 1 || $page > $totalpages ) return;
+
+    return paginate_links( array(
+        'base'          => str_replace( $bignum, '%#%', esc_url( get_pagenum_link( $bignum ) ) ),
+        'format'        => '',
+        'current'       => max( 1, $page ),
+        'total'         => $totalpages,
+        'prev_text'     => 'Prev',
+        'next_text'     => 'Next',
+        'type'          => 'list',
+        'show_all'      => false,
+        'end_size'      => $end_size,
+        'mid_size'      => $mid_size
+    ) );
+}
