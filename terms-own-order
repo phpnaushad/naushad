@@ -1,0 +1,17 @@
+<?php
+  $taxonomy = 'home-remediestype';
+  $args_terms_id_list = array(112,113,114,115,116,117,118);	
+ 
+  foreach ($args_terms_id_list as $current_term_id) :
+  $term = get_term_by('id', $current_term_id , $taxonomy);
+  $term_link = get_term_link($term); 
+  ?>					 
+  <div class="col-md-4 col-sm-6 col-xs-12 second-sec-wrap">
+    <div class="img"><?php echo the_term_thumbnail( $term->term_id, $size = 'post-thumbnail', $attr = $term->name) ?></div>
+    <h3><a href="<?php echo esc_url( $term_link ); ?>"><?php echo $term->name;?></a></h3>
+    <div class="cont">
+      <p><?php echo substr($term->description, 0, 170); ?></p>
+      <a href="<?php echo esc_url( $term_link ); ?>" class="btn">Read More</a>
+    </div>
+  </div>
+  <?php endforeach; ?>
