@@ -1,0 +1,8 @@
+ mysql -u 'database_user' -p'database_password' database_name < sql_file_name_with_full_path
+
+  
+mysql -u 'root' store < E:/Backups/atiyaherbs/dbname.sql
+
+C:/Users/nausad.ahmad/Desktop/dbname.sql
+
+mysql -u 'root' dbherbs_old_dns < C:/Users/nausad.ahmad/Desktop/dbname.sql
