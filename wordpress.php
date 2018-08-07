@@ -55,7 +55,8 @@ upload_tmp_dir = /var/www/vhosts/domainname.com/httpdocs/wp-content/temp/
 Get unattach image from posts
 */
  select * from wp_posts where post_parent='0' and post_type='attachment'
-
+/*Delete transient data from wp_options (Garbage values)*/
+DELETE FROM `wp_options` WHERE `option_name` LIKE ('%\_transient\_%');	
 /*Display post image*/ 
 $imgAlt = get_post_meta($imgID,'_wp_attachment_image_alt', true); 
 $imgID  = get_post_thumbnail_id($post->ID);
