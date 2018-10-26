@@ -1,0 +1,71 @@
+	<div class="news-box">
+	<div class="heading-title"><h2><i class="fa fa-newspaper-o" aria-hidden="true"></i> Rewind Query</h2></div>
+	<div class="row">
+	<?php
+	$args = array(
+	  'post_type' => 'post' ,
+	  'orderby' => 'date' ,
+	  'order' => 'DESC' ,
+	  'posts_per_page' => 1,
+	  'cat'         => '3',
+	  'paged' => get_query_var('paged'),
+	  'post_parent' => $parent
+	); 
+	$query = new WP_query ( $args );
+	if ( $query->have_posts() ) { 
+	while ( $query->have_posts() ) : $query->the_post(); 
+	?>
+		<div class="col-md-5 col-sm-12 col-xs-12">	
+			<div class="post-thumbnail">
+			<a href="<?php the_permalink(); ?>">
+			<?php the_post_thumbnail( array(365, 244), false, array('alt' => trim(strip_tags( $wp_postmeta->_wp_attachment_image_alt ))
+			) ); ?></a>
+			</div>
+		
+		</div>
+		<div class="col-md-7 col-sm-12 col-xs-12">
+			<h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
+			<p><?php echo wp_trim_words( get_the_content(), 25 ); ?></p>
+			<div class="anchor-sec"><a href="<?php the_permalink(); ?>" class="btn">Read More</a></div>
+		</div>
+		<?php endwhile; rewind_posts(); } ?>
+	</div>
+
+	<div class="row">
+		<div class="two-clm">		
+		     <?php
+			$args = array(
+			  'post_type' => 'post' ,
+			  'orderby' => 'date' ,
+			  'order' => 'DESC' ,
+			  'posts_per_page' => 2,
+			  'cat'         => '3',
+			  'post__not_in' => array (get_the_ID()),
+			  'paged' => get_query_var('paged'),
+			  'post_parent' => $parent
+			); 
+			$query = new WP_query ( $args );
+			if ( $query->have_posts() ) { 
+			while ( $query->have_posts() ) : $query->the_post(); 
+			?>
+            <div class="col-md-6 col-sm-12 col-xs-12 mini-box-gap">
+				<div class="row">
+					<div class="col-md-3 col-sm-4 col-xs-12">	
+						<div class="post-thumbnail">
+						<a href="<?php the_permalink(); ?>">				
+						<?php the_post_thumbnail( array(150, 100), false, array('alt' => trim(strip_tags( $wp_postmeta->_wp_attachment_image_alt ))
+						) ); ?></a>
+						</div>
+						
+					</div>
+					<div class="col-md-9 col-sm-8 col-xs-12">
+						<h5><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
+					</div>
+				</div>
+			</div>
+			<?php endwhile; } wp_reset_postdata(); ?>
+
+	    </div>
+	</div>
+
+	</div>
