@@ -140,6 +140,23 @@ $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 	$query_string = 'paged=' . $paged;
 	query_posts($query_string); 
 	if (have_posts()) : while (have_posts()) : the_post();
+/*Add custom pagination for Blog page*/
+function pagination_bar() {
+    global $wp_query;
+ 
+    $total_pages = $wp_query->max_num_pages;
+ 
+    if ($total_pages > 1){
+        $current_page = max(1, get_query_var('paged'));
+ 
+        echo paginate_links(array(
+            'base' => get_pagenum_link(1) . '%_%',
+            'format' => '/page/%#%',
+            'current' => $current_page,
+            'total' => $total_pages,
+        ));
+    }
+}
 		
 /*
 Link to particular page code:
