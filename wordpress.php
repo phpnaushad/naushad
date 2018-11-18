@@ -36,6 +36,12 @@ function redirect_to_home_if_author_parameter() {
 		exit;
 	}
 }
+_____________________________________________________________________________________________
+https://www.cloudways.com/blog/custom-dashboard-using-woocommerce-php-rest-api/
+
+______________________________________________________________________________________________
+	
+	
 add_action( 'template_redirect', 'redirect_to_home_if_author_parameter' );
 /*image attachment page, then they will be redirected to the parent post*/
 add_action( 'template_redirect', 'wpsites_attachment_redirect' );
