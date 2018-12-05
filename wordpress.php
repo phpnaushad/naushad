@@ -595,3 +595,15 @@ $categories = get_categories( array(
 </ul>
 <?php
 }
+echo off
+command
+echo on
+
+save as in notepad cmdopen.bat
+
+
+run on cmdopen
+tracert www.facebook.com
+__________________________
+
+hot shield addons
