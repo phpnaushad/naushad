@@ -11,6 +11,11 @@ RewriteEngine on
 RewriteCond %{HTTP_HOST} !^www\.yoursite\.com
 RewriteRule (.*) http://www.yoursite.com/$1 [R=301,L]
 
+#Redirect subdomain http to https
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/%{REQUEST_URI} [L,R=301]
+
+
 # Redirect a particular page
 Redirect 301 /index.php/homepage/2-uncategorised/ http://www.airlinkshuttle.co.nz/
 
