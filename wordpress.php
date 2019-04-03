@@ -1,4 +1,10 @@
 <?php
+// Stop WordPress from modifying .htaccess permalink rules
+add_filter('flush_rewrite_rules_hard','__return_false');
+
+//Default .htaccess permissions   = 644 (rw- r-- r--)
+Read-only .htaccess permissions = 444 (r-- r-- r--)
+
 # Always use https for secure connections
 # Replace 'www.example.com' with your domain name
 # (as it appears on your SSL certificate)
