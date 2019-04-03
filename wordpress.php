@@ -606,6 +606,21 @@ $categories = get_categories( array(
 </ul>
 <?php
 }
+//Display posts by current author:
+$author = get_user_by( 'slug', get_query_var( 'author_name' ) );
+//echo $author->ID;			
+$args = array(
+'post_type' => 'post',
+'author'    => $author->ID,			
+'orderby'   =>  'post_date',
+'order'     =>  'ASC',
+'posts_per_page' => -1
+);
+$loop = new WP_Query( $args );
+while ( $loop->have_posts() ) : $loop->the_post();
+		
+		
+		
 echo off
 command
 echo on
