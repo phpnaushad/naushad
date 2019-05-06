@@ -51,7 +51,16 @@ ________________________________________________________________________________
 https://www.cloudways.com/blog/custom-dashboard-using-woocommerce-php-rest-api/
 
 ______________________________________________________________________________________________
-	
+//Keep priority 9 so we can remove WordPress action that is on 10
+add_action( 'login_head', 'custom_no_robots', 9);
+/**
+ * Custom robot tags
+ */
+function custom_no_robots() {
+    remove_action( 'login_head', 'wp_no_robots' );
+    echo "<meta name='robots' content='noindex, nofollow' />\n";
+}
+
 	
 add_action( 'template_redirect', 'redirect_to_home_if_author_parameter' );
 /*image attachment page, then they will be redirected to the parent post*/
