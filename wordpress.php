@@ -60,7 +60,20 @@ function custom_no_robots() {
     remove_action( 'login_head', 'wp_no_robots' );
     echo "<meta name='robots' content='noindex, nofollow' />\n";
 }
+//Create custom thumbnail image size
+if ( function_exists( 'add_theme_support' ) ) { 
+    add_theme_support( 'post-thumbnails' );
+    add_image_size( 'square-large', 300, 300, true); // name, width, height, crop 
+    add_filter('image_size_names_choose', 'my_image_sizes');
+}
 
+function my_image_sizes($sizes) {
+    $addsizes = array(
+        "square-large" => __( "Large square image")
+    );
+    $newsizes = array_merge($sizes, $addsizes);
+    return $newsizes;
+}
 	
 add_action( 'template_redirect', 'redirect_to_home_if_author_parameter' );
 /*image attachment page, then they will be redirected to the parent post*/
