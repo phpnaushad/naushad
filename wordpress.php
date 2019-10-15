@@ -74,8 +74,30 @@ function my_image_sizes($sizes) {
     $newsizes = array_merge($sizes, $addsizes);
     return $newsizes;
 }
-	
+
+//Validate mobile number
+function custom_phone_validation($result,$tag){
+
+    $type = $tag->type;
+    $name = $tag->name;
+
+    if($type == 'tel' || $type == 'tel*'){
+
+        $phoneNumber = isset( $_POST[$name] ) ? trim( $_POST[$name] ) : '';
+
+        $phoneNumber = preg_replace('/[() .+-]/', '', $phoneNumber);
+            if (strlen((string)$phoneNumber) != 10) {
+                $result->invalidate( $tag, 'Please enter a valid mobile number.' );
+            }
+    }
+    return $result;
+}
+add_filter('wpcf7_validate_tel','custom_phone_validation', 10, 2);
+add_filter('wpcf7_validate_tel*', 'custom_phone_validation', 10, 2);
+
+
 add_action( 'template_redirect', 'redirect_to_home_if_author_parameter' );
+
 /*image attachment page, then they will be redirected to the parent post*/
 add_action( 'template_redirect', 'wpsites_attachment_redirect' );
 function wpsites_attachment_redirect(){
