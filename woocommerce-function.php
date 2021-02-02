@@ -200,3 +200,171 @@ function wooc_save_extra_register_fields( $customer_id ) {
 }
 
 add_action( 'woocommerce_created_customer', 'wooc_save_extra_register_fields' );
+
+/*This code for woocommerce template override*/
+add_action( 'after_setup_theme', 'woocommerce_support' );
+function woocommerce_support() {
+    add_theme_support( 'woocommerce' );
+}
+
+/*Hide Gutenberg editor in admin*/
+add_filter('use_block_editor_for_post', '__return_false');
+
+
+/**
+ * Change number of products that are displayed per page (shop page)
+ */
+add_filter( 'loop_shop_per_page', 'new_loop_shop_per_page', 20 );
+function new_loop_shop_per_page( $cols ) {  
+  $cols = 9;
+  return $cols;
+}
+
+
+/**
+ * Allow HTML in term (category, tag) descriptions
+ */
+foreach ( array( 'pre_term_description' ) as $filter ) {
+    remove_filter( $filter, 'wp_filter_kses' );
+} 
+foreach ( array( 'term_description' ) as $filter ) {
+    remove_filter( $filter, 'wp_kses_data' );
+}
+/*change add to cart text*/
+add_filter( 'woocommerce_product_single_add_to_cart_text', 'ld_woo_custom_cart_button_text' );
+add_filter( 'woocommerce_product_add_to_cart_text', 'ld_woo_custom_cart_button_text' ); 
+function ld_woo_custom_cart_button_text() {
+        return __( 'Buy Now', 'woocommerce' );
+}
+
+
+/*auto checked terms & condition on checkout page*/
+add_filter( 'woocommerce_terms_is_checked_default', '__return_true' );
+/*CCavenue auto selected on checkout page*/
+add_action( 'woocommerce_before_checkout_form', 'action_before_checkout_form' );
+function action_before_checkout_form(){
+    // HERE define the default payment gateway ID
+    $default_payment_gateway_id = 'cod';
+
+    WC()->session->set('chosen_payment_method', $default_payment_gateway_id);
+}
+
+/*Disable WooCommerce update*/
+function removewoo_updates_info( $value ) {
+   unset( $value->response['woocommerce/woocommerce.php'] );
+   return $value;
+}
+add_filter( 'site_transient_update_plugins', 'removewoo_updates_info' );
+
+/*Calculate no of items in cart using ajax*/
+add_filter( 'woocommerce_add_to_cart_fragments', 'wc_refresh_mini_cart_count');
+function wc_refresh_mini_cart_count($fragments){
+    ob_start();
+    ?>
+    <div id="mini-cart-count">
+        <?php echo WC()->cart->get_cart_contents_count(); ?>
+    </div>
+    <?php
+        $fragments['#mini-cart-count'] = ob_get_clean();
+    return $fragments;
+}
+
+/*Remove star rating from shop page*/
+add_action( 'woocommerce_after_shop_loop_item_title', 'conditionally_remove_loop_rating', 4 );
+function conditionally_remove_loop_rating(){
+    global $product;
+
+    if( ! ( $product->get_review_count() > 0 ) ) {
+        remove_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_rating', 5 );
+    }
+}
+
+if ( ! function_exists( 'woocommerce_template_loop_product_thumbnail' ) ) {
+
+    /**
+     * Get the product thumbnail for the loop.
+     */
+    function woocommerce_template_loop_product_thumbnail() {
+        echo '<div class="custom-imagethumb">'.woocommerce_get_product_thumbnail().'</div>'; // WPCS: XSS ok.
+    }
+}
+
+// Remove the product rating display on product loops
+remove_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_rating', 5 );
+
+
+
+/**
+ * Check product allready added in cart on single product pages
+ */
+add_filter('woocommerce_product_single_add_to_cart_text', 'woo_custom_cart_button_text');
+
+function woo_custom_cart_button_text() {
+	
+	foreach( WC()->cart->get_cart() as $cart_item_key => $values ) {
+		$_product = $values['data'];
+	
+		if( get_the_ID() == $_product->id ) {
+			return __('Already in cart - Add Again?', 'woocommerce');
+		}
+	}
+	
+	return __('Buy Now', 'woocommerce');
+}
+
+/**
+ * Change the add to cart text on product archives
+ */
+add_filter( 'woocommerce_product_add_to_cart_text', 'woo_archive_custom_cart_button_text' );
+
+function woo_archive_custom_cart_button_text() {
+	
+	foreach( WC()->cart->get_cart() as $cart_item_key => $values ) {
+		$_product = $values['data'];
+	
+		if( get_the_ID() == $_product->id ) {
+			return __('Already in cart', 'woocommerce');
+		}
+	}
+	
+	return __('Buy Now', 'woocommerce');
+}
+//Redirect cart page to checkout page
+add_filter ('woocommerce_add_to_cart_redirect', function() {
+  return WC()->cart->get_checkout_url();
+} );
+
+/**
+ * @snippet       Add Shipping Fee for Non-Continental States
+ * @how-to        Get CustomizeWoo.com FREE
+ * @sourcecode    https://businessbloomer.com/?p=19954
+ * @author        Rodolfo Melogli
+ * @compatible    WC 3.5.4
+ * @donate $9     https://businessbloomer.com/bloomer-armada/
+ */
+ 
+add_action( 'woocommerce_cart_calculate_fees', 'bbloomer_add_cart_fee' );
+ 
+function bbloomer_add_cart_fee() {
+$noncontinental = array('Abu Dhabi');
+if( in_array( WC()->customer->shipping_state, $noncontinental ) ) {
+ $surcharge = 0.3333333 * WC()->cart->shipping_total; // 5% surcharge based on shipping cost
+ WC()->cart->add_fee( __('Abu Dhabi Shipping', 'woocommerce'), $surcharge );
+}
+}
+
+/**
+* change currency symbol to AED
+*/
+
+add_filter( 'woocommerce_currency_symbol', 'wc_change_uae_currency_symbol', 10, 2 );
+
+function wc_change_uae_currency_symbol( $currency_symbol, $currency ) {
+switch ( $currency ) {
+case 'AED':
+$currency_symbol = '<span>AED</span>';
+break;
+}
+
+return $currency_symbol;
+}
