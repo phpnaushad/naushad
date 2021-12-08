@@ -1,4 +1,50 @@
 <?php
+/*Hide Newest page wp editor*/
+add_filter('use_block_editor_for_post', '__return_false');
+/*Hide Newest wp widgets editor*/
+add_filter( 'use_widgets_block_editor', '__return_false' );
+
+function get_banner_html() {
+    return '<div class="inner-banner"><a href="tel:0114000777" title="Call Now"><img src="https://www.sehathon.com/wp-content/uploads/2021/08/banner-inner3.jpg"></a></div>';
+}
+
+
+function get_banner_html() {
+    return '<div class="inner-banner"><a href="tel:01140231599" title="Call Now"><img src="https://www.jointspainhealers.com/wp-content/uploads/2021/08/banner-inner3.jpg"></a></div>';
+}
+
+function insert_banner_into_content( $content ) {
+
+    // make sure we're affecting only posts
+    if ( 'post' !== get_post_type() ) {
+        return $content;
+    }
+
+    // split content by paragraph tag
+    $paragraphs = explode( '<p>', $content );
+
+    // continue only when post has 3 paragraphs or more
+    if ( count( $paragraphs ) < 3 ) {
+        return $content;
+    }
+    // add banner after 3rd paragraph
+    $paragraphs[2] .= get_banner_html();
+
+    // return modified content
+    return implode( '<p>', $paragraphs );
+}
+// hook it up!
+add_filter( 'the_content', 'insert_banner_into_content' );
+
+//walker menu
+class My_Walker_Nav_Menu extends Walker_Nav_Menu {
+  //function start_lvl(&$output, $depth) {
+  function start_lvl( &$output, $depth = 0, $args = array() )  {    
+    $indent = str_repeat("\t", $depth);
+    $output .= "\n$indent<ul class=\"dropdown-menu\">\n";
+  }
+}
+
 // Stop WordPress from modifying .htaccess permalink rules
 add_filter('flush_rewrite_rules_hard','__return_false');
 
