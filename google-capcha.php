@@ -40,7 +40,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Learn Web Coding > Google reCAPTHA V3 integration in PHP</title>
+    <title>Google reCAPTHA V3</title>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -49,7 +49,7 @@
   </head>
   <body>
 	<div class="container">
-	    <center><h1>Google reCAPTHA V3 integration in PHP</h1><img src="recaptcha.png"></center>
+	    <center><h1>Google reCAPTHA V3 </h1></center>
 	    <hr>
 	    <div class="card">
 		  	<h3 class="card-header info-color white-text text-center py-4">
